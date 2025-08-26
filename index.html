@@ -9,7 +9,6 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Latar belakang baru: putih kebiruan dengan dominan putih */
             background: linear-gradient(to bottom, #f0f9ff, #ffffff);
         }
         .glassmorphism {
@@ -36,7 +35,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Styling untuk notifikasi custom */
         #notification {
             transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
             transform: translateY(-100px);
@@ -46,164 +44,199 @@
             transform: translateY(20px);
             opacity: 1;
         }
+        /* Sidebar styles */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                transform: translateX(-100%);
+                z-index: 40;
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body class="text-gray-700">
 
-    <!-- Elemen Notifikasi -->
     <div id="notification" class="fixed top-0 left-1/2 -translate-x-1/2 z-50 p-4 rounded-lg shadow-lg text-white font-semibold">
         <p id="notification-message"></p>
     </div>
-
-    <div class="container mx-auto p-4 md:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">Laporan Foto SDN Kebon Pala 02 Pagi</h1>
-        </header>
-
-        <nav class="glassmorphism p-4 mb-8 flex flex-wrap justify-center gap-2 md:gap-4">
-            <button class="tab-button py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50 active" onclick="showTab('fotoUpacara')">Foto Upacara</button>
-            <button class="tab-button py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('fotoRabu')">Foto Rabu</button>
-            <button class="tab-button py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('rekapUpacara'); loadRekap('upacara');">Rekap Upacara</button>
-            <button class="tab-button py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('rekapRabu'); loadRekap('rabu');">Rekap Foto Rabu</button>
-        </nav>
-
-        <main>
-            <!-- Form Foto Upacara -->
-            <div id="fotoUpacara" class="tab-content glassmorphism p-6 md:p-8">
-                <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Form Laporan Foto Upacara</h2>
-                <form id="formUpacara" class="space-y-6">
-                    <input type="hidden" id="upacara-id" name="id">
-                    <input type="hidden" id="upacara-fileId" name="fileId">
-                    <div>
-                        <label for="upacara-tanggal" class="block mb-2 text-sm font-medium">Tanggal</label>
-                        <input type="date" id="upacara-tanggal" name="tanggal" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div>
-                        <label for="upacara-nama" class="block mb-2 text-sm font-medium">Nama</label>
-                        <input type="text" id="upacara-nama" name="nama" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div>
-                        <label for="upacara-status" class="block mb-2 text-sm font-medium">Status</label>
-                        <select id="upacara-status" name="status" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                            <option value="">Pilih Status</option>
-                            <option value="ASN">ASN</option>
-                            <option value="Non ASN">Non ASN</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="upacara-kegiatan" class="block mb-2 text-sm font-medium">Kegiatan</label>
-                        <input type="text" id="upacara-kegiatan" name="kegiatan" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Contoh: Upacara HUT RI" required>
-                    </div>
-                    <div>
-                        <label for="upacara-foto" class="block mb-2 text-sm font-medium">Upload Foto</label>
-                        <input type="file" id="upacara-foto" name="foto" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer" required>
-                        <img id="upacara-preview" class="mt-4 rounded-lg max-w-xs hidden" alt="Preview Foto">
-                    </div>
-                    <div class="flex justify-end space-x-4">
-                        <button type="submit" id="upacara-submit-btn" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Kirim</button>
-                        <button type="button" id="upacara-update-btn" class="hidden text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" onclick="updateData('upacara')">Simpan</button>
-                    </div>
-                </form>
+    
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white shadow-md absolute inset-y-0 left-0 md:relative md:translate-x-0">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-800">Menu Navigasi</h2>
             </div>
+            <nav class="mt-4 flex flex-col space-y-2 p-2">
+                <button class="tab-button w-full text-left py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50 active" onclick="showTab('fotoUpacara')">Foto Upacara</button>
+                <button class="tab-button w-full text-left py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('fotoRabu')">Foto Rabu</button>
+                <button class="tab-button w-full text-left py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('rekapUpacara'); loadRekap('upacara');">Rekap Upacara</button>
+                <button class="tab-button w-full text-left py-2 px-4 rounded-lg transition-all duration-300 hover:bg-sky-200/50" onclick="showTab('rekapRabu'); loadRekap('rabu');">Rekap Foto Rabu</button>
+            </nav>
+        </aside>
 
-            <!-- Form Foto Rabu -->
-            <div id="fotoRabu" class="tab-content glassmorphism p-6 md:p-8 hidden">
-                <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Form Laporan Foto Rabu</h2>
-                <form id="formRabu" class="space-y-6">
-                    <input type="hidden" id="rabu-id" name="id">
-                    <input type="hidden" id="rabu-fileId" name="fileId">
-                    <div>
-                        <label for="rabu-tanggal" class="block mb-2 text-sm font-medium">Tanggal</label>
-                        <input type="date" id="rabu-tanggal" name="tanggal" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div>
-                        <label for="rabu-nama" class="block mb-2 text-sm font-medium">Nama</label>
-                        <input type="text" id="rabu-nama" name="nama" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div>
-                        <label for="rabu-status" class="block mb-2 text-sm font-medium">Status</label>
-                        <select id="rabu-status" name="status" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                            <option value="">Pilih Status</option>
-                            <option value="ASN">ASN</option>
-                            <option value="Non ASN">Non ASN</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="rabu-transportasi" class="block mb-2 text-sm font-medium">Transportasi</label>
-                        <select id="rabu-transportasi" name="transportasi" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                            <option value="">Pilih Transportasi</option>
-                            <option>Transjakarta</option>
-                            <option>MRT</option>
-                            <option>LRT Jakarta</option>
-                            <option>LRT Jabodebek</option>
-                            <option>KRL Jabodetabek</option>
-                            <option>Kereta Bandara</option>
-                            <option>Bus/Angkot Reguler</option>
-                            <option>Angkutan antar jemput karyawan/pegawai</option>
-                            <option>Kapal</option>
-                            <option>Jalan Kaki / Bersepeda</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="rabu-foto" class="block mb-2 text-sm font-medium">Upload Foto</label>
-                        <input type="file" id="rabu-foto" name="foto" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer" required>
-                        <img id="rabu-preview" class="mt-4 rounded-lg max-w-xs hidden" alt="Preview Foto">
-                    </div>
-                    <div class="flex justify-end space-x-4">
-                        <button type="submit" id="rabu-submit-btn" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Kirim</button>
-                        <button type="button" id="rabu-update-btn" class="hidden text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" onclick="updateData('rabu')">Simpan</button>
-                    </div>
-                </form>
-            </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <button id="menu-button" class="md:hidden text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-800">Laporan Foto SDN Kebon Pala 02 Pagi</h1>
+            </header>
+            
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8" style="background: linear-gradient(to bottom, #f0f9ff, #ffffff);">
+                <!-- Form Foto Upacara -->
+                <div id="fotoUpacara" class="tab-content glassmorphism p-6 md:p-8">
+                    <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Form Laporan Foto Upacara</h2>
+                    <form id="formUpacara" class="space-y-6">
+                        <input type="hidden" id="upacara-id" name="id">
+                        <input type="hidden" id="upacara-fileId" name="fileId">
+                        <div>
+                            <label for="upacara-tanggal" class="block mb-2 text-sm font-medium">Tanggal</label>
+                            <input type="date" id="upacara-tanggal" name="tanggal" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div>
+                            <label for="upacara-nama" class="block mb-2 text-sm font-medium">Nama</label>
+                            <input type="text" id="upacara-nama" name="nama" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div>
+                            <label for="upacara-status" class="block mb-2 text-sm font-medium">Status</label>
+                            <select id="upacara-status" name="status" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <option value="">Pilih Status</option>
+                                <option value="ASN">ASN</option>
+                                <option value="Non ASN">Non ASN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="upacara-kegiatan" class="block mb-2 text-sm font-medium">Kegiatan</label>
+                            <input type="text" id="upacara-kegiatan" name="kegiatan" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Contoh: Upacara HUT RI" required>
+                        </div>
+                        <div>
+                            <label for="upacara-foto" class="block mb-2 text-sm font-medium">Upload Foto</label>
+                            <input type="file" id="upacara-foto" name="foto" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer" required>
+                            <img id="upacara-preview" class="mt-4 rounded-lg max-w-xs hidden" alt="Preview Foto">
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="submit" id="upacara-submit-btn" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Kirim</button>
+                            <button type="button" id="upacara-update-btn" class="hidden text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" onclick="updateData('upacara')">Simpan</button>
+                        </div>
+                    </form>
+                </div>
 
-            <!-- Rekap Upacara -->
-            <div id="rekapUpacara" class="tab-content glassmorphism p-6 md:p-8 hidden">
-                 <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Rekap Laporan Foto Upacara</h2>
-                 <div class="mb-4">
-                    <input type="text" id="searchUpacara" onkeyup="filterTable('upacara')" placeholder="Cari laporan..." class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500">
-                 </div>
-                 <div class="overflow-x-auto">
-                    <table id="tableUpacara" class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-700 uppercase bg-sky-100">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">ID</th>
-                                <th scope="col" class="px-6 py-3">Tanggal</th>
-                                <th scope="col" class="px-6 py-3">Nama</th>
-                                <th scope="col" class="px-6 py-3">Status</th>
-                                <th scope="col" class="px-6 py-3">Kegiatan</th>
-                                <th scope="col" class="px-6 py-3">Link Foto</th>
-                                <th scope="col" class="px-6 py-3">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                 </div>
-            </div>
+                <!-- Form Foto Rabu -->
+                <div id="fotoRabu" class="tab-content glassmorphism p-6 md:p-8 hidden">
+                    <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Form Laporan Foto Rabu</h2>
+                    <form id="formRabu" class="space-y-6">
+                        <input type="hidden" id="rabu-id" name="id">
+                        <input type="hidden" id="rabu-fileId" name="fileId">
+                        <div>
+                            <label for="rabu-tanggal" class="block mb-2 text-sm font-medium">Tanggal</label>
+                            <input type="date" id="rabu-tanggal" name="tanggal" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div>
+                            <label for="rabu-nama" class="block mb-2 text-sm font-medium">Nama</label>
+                            <input type="text" id="rabu-nama" name="nama" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div>
+                            <label for="rabu-status" class="block mb-2 text-sm font-medium">Status</label>
+                            <select id="rabu-status" name="status" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <option value="">Pilih Status</option>
+                                <option value="ASN">ASN</option>
+                                <option value="Non ASN">Non ASN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="rabu-transportasi" class="block mb-2 text-sm font-medium">Transportasi</label>
+                            <select id="rabu-transportasi" name="transportasi" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <option value="">Pilih Transportasi</option>
+                                <option>Transjakarta</option>
+                                <option>MRT</option>
+                                <option>LRT Jakarta</option>
+                                <option>LRT Jabodebek</option>
+                                <option>KRL Jabodetabek</option>
+                                <option>Kereta Bandara</option>
+                                <option>Bus/Angkot Reguler</option>
+                                <option>Angkutan antar jemput karyawan/pegawai</option>
+                                <option>Kapal</option>
+                                <option>Jalan Kaki / Bersepeda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="rabu-waktu" class="block mb-2 text-sm font-medium">Waktu</label>
+                            <select id="rabu-waktu" name="waktu" class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <option value="">Pilih Waktu</option>
+                                <option value="Pagi">Pagi</option>
+                                <option value="Sore">Sore</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="rabu-foto" class="block mb-2 text-sm font-medium">Upload Foto</label>
+                            <input type="file" id="rabu-foto" name="foto" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer" required>
+                            <img id="rabu-preview" class="mt-4 rounded-lg max-w-xs hidden" alt="Preview Foto">
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="submit" id="rabu-submit-btn" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Kirim</button>
+                            <button type="button" id="rabu-update-btn" class="hidden text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" onclick="updateData('rabu')">Simpan</button>
+                        </div>
+                    </form>
+                </div>
 
-            <!-- Rekap Rabu -->
-            <div id="rekapRabu" class="tab-content glassmorphism p-6 md:p-8 hidden">
-                <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Rekap Laporan Foto Rabu</h2>
-                 <div class="mb-4">
-                    <input type="text" id="searchRabu" onkeyup="filterTable('rabu')" placeholder="Cari laporan..." class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500">
-                 </div>
-                 <div class="overflow-x-auto">
-                    <table id="tableRabu" class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-700 uppercase bg-sky-100">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">ID</th>
-                                <th scope="col" class="px-6 py-3">Tanggal</th>
-                                <th scope="col" class="px-6 py-3">Nama</th>
-                                <th scope="col" class="px-6 py-3">Status</th>
-                                <th scope="col" class="px-6 py-3">Transportasi</th>
-                                <th scope="col" class="px-6 py-3">Link Foto</th>
-                                <th scope="col" class="px-6 py-3">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                 </div>
-            </div>
-        </main>
+                <!-- Rekap Upacara -->
+                <div id="rekapUpacara" class="tab-content glassmorphism p-6 md:p-8 hidden">
+                     <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Rekap Laporan Foto Upacara</h2>
+                     <div class="mb-4">
+                        <input type="text" id="searchUpacara" onkeyup="filterTable('upacara')" placeholder="Cari laporan..." class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500">
+                     </div>
+                     <div class="overflow-x-auto">
+                        <table id="tableUpacara" class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs text-gray-700 uppercase bg-sky-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">ID</th>
+                                    <th scope="col" class="px-6 py-3">Tanggal</th>
+                                    <th scope="col" class="px-6 py-3">Nama</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Kegiatan</th>
+                                    <th scope="col" class="px-6 py-3">Link Foto</th>
+                                    <th scope="col" class="px-6 py-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                     </div>
+                </div>
+
+                <!-- Rekap Rabu -->
+                <div id="rekapRabu" class="tab-content glassmorphism p-6 md:p-8 hidden">
+                    <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Rekap Laporan Foto Rabu</h2>
+                     <div class="mb-4">
+                        <input type="text" id="searchRabu" onkeyup="filterTable('rabu')" placeholder="Cari laporan..." class="bg-white/80 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500">
+                     </div>
+                     <div class="overflow-x-auto">
+                        <table id="tableRabu" class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs text-gray-700 uppercase bg-sky-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">ID</th>
+                                    <th scope="col" class="px-6 py-3">Tanggal</th>
+                                    <th scope="col" class="px-6 py-3">Nama</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Transportasi</th>
+                                    <th scope="col" class="px-6 py-3">Waktu</th>
+                                    <th scope="col" class="px-6 py-3">Link Foto</th>
+                                    <th scope="col" class="px-6 py-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                     </div>
+                </div>
+            </main>
+        </div>
     </div>
 
     <!-- Modal Konfirmasi Hapus -->
@@ -223,28 +256,21 @@
         <div class="loader"></div>
     </div>
 
-
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQje4od76e9DuvQcDhjhmO88L729fKQHlN_y_tdMEArs1R5qMkl-ocRDpXADQbOMUJNA/exec'; // <-- JANGAN LUPA GANTI URL INI
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQje4od76e9DuvQcDhjhmO88L729fKQHlN_y_tdMEArs1R5qMkl-ocRDpXADQbOMUJNA/exec"; // <-- JANGAN LUPA GANTI URL INI
 
-        // Fungsi Notifikasi
         function showNotification(message, type = 'success') {
             const notif = document.getElementById('notification');
             const notifMessage = document.getElementById('notification-message');
-            
             notifMessage.textContent = message;
-            notif.className = 'fixed top-0 left-1/2 -translate-x-1/2 z-50 p-4 rounded-lg shadow-lg text-white font-semibold'; // Reset class
+            notif.className = 'fixed top-0 left-1/2 -translate-x-1/2 z-50 p-4 rounded-lg shadow-lg text-white font-semibold';
             if (type === 'success') {
                 notif.classList.add('bg-green-500');
             } else {
                 notif.classList.add('bg-red-500');
             }
-            
             notif.classList.add('show');
-            
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { notif.classList.remove('show'); }, 3000);
         }
 
         function showTab(tabName) {
@@ -252,6 +278,8 @@
             document.getElementById(tabName).classList.remove('hidden');
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`button[onclick*="${tabName}"]`).classList.add('active');
+            // Close sidebar on mobile after clicking a tab
+            document.getElementById('sidebar').classList.remove('open');
         }
 
         function showLoader() { document.getElementById('loaderModal').classList.remove('hidden'); }
@@ -264,7 +292,7 @@
             const preview = document.getElementById(previewId);
             if (event.target.files && event.target.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = (e) => {
                     preview.src = e.target.result;
                     preview.classList.remove('hidden');
                 }
@@ -289,19 +317,12 @@
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                const fileData = {
-                    base64: reader.result.split(',')[1],
-                    type: file.type,
-                    name: file.name
-                };
-
+                const fileData = { base64: reader.result.split(',')[1], type: file.type, name: file.name };
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
                 data.id = `ID-${type.toUpperCase()}-${Date.now()}`;
                 delete data.foto;
-                
                 const payload = { action: 'create', type: type, data: data, fileData: fileData };
-
                 fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
                 .then(res => res.json())
                 .then(result => {
@@ -310,13 +331,10 @@
                         showNotification('Laporan Foto Berhasil Di Kirim');
                         form.reset();
                         document.getElementById(`${type}-preview`).classList.add('hidden');
-                        // Pindah ke tab rekap dan muat data baru
                         const rekapTab = type === 'upacara' ? 'rekapUpacara' : 'rekapRabu';
                         showTab(rekapTab);
                         loadRekap(type);
-                    } else {
-                        throw new Error(result.message || 'Gagal mengirim laporan.');
-                    }
+                    } else { throw new Error(result.message || 'Gagal mengirim laporan.'); }
                 })
                 .catch(err => {
                     hideLoader();
@@ -337,22 +355,29 @@
                         data.data.forEach(row => {
                             const tr = document.createElement('tr');
                             tr.className = "border-b border-gray-200 hover:bg-sky-50";
-                            tr.innerHTML = `
+                            let rowContent = `
                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${row.id}</td>
                                 <td class="px-6 py-4">${row.tanggal}</td>
                                 <td class="px-6 py-4">${row.nama}</td>
                                 <td class="px-6 py-4">${row.status}</td>
                                 <td class="px-6 py-4">${type === 'upacara' ? row.kegiatan : row.transportasi}</td>
+                            `;
+                            if (type === 'rabu') {
+                                rowContent += `<td class="px-6 py-4">${row.waktu || ''}</td>`;
+                            }
+                            rowContent += `
                                 <td class="px-6 py-4"><a href="${row.foto}" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a></td>
                                 <td class="px-6 py-4 flex gap-2">
                                     <button onclick="editData('${type}', '${row.id}')" class="font-medium text-yellow-600 hover:underline">Edit</button>
                                     <button onclick="confirmDeleteData('${type}', '${row.id}', '${row.fileId}')" class="font-medium text-red-600 hover:underline">Hapus</button>
                                 </td>
                             `;
+                            tr.innerHTML = rowContent;
                             tableBody.appendChild(tr);
                         });
                     } else {
-                         tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">${data.message || 'Tidak ada data'}</td></tr>`;
+                         const colspan = type === 'upacara' ? 7 : 8;
+                         tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4">${data.message || 'Tidak ada data'}</td></tr>`;
                     }
                     hideLoader();
                 })
@@ -368,7 +393,6 @@
             const filter = input.value.toUpperCase();
             const table = document.getElementById(`table${type.charAt(0).toUpperCase() + type.slice(1)}`);
             const tr = table.getElementsByTagName("tr");
-
             for (let i = 1; i < tr.length; i++) {
                 let td = tr[i].getElementsByTagName("td");
                 let match = false;
@@ -399,17 +423,15 @@
                             document.getElementById('upacara-kegiatan').value = data.kegiatan;
                         } else {
                             document.getElementById('rabu-transportasi').value = data.transportasi;
+                            document.getElementById('rabu-waktu').value = data.waktu;
                         }
                         document.getElementById(`${type}-fileId`).value = data.fileId;
-                        
                         const preview = document.getElementById(`${type}-preview`);
                         preview.src = data.foto;
                         preview.classList.remove('hidden');
-
                         document.getElementById(`${type}-submit-btn`).classList.add('hidden');
                         document.getElementById(`${type}-update-btn`).classList.remove('hidden');
                         document.getElementById(`${type}-foto`).required = false;
-
                     } else {
                         showNotification('Data tidak ditemukan.', 'error');
                     }
@@ -426,13 +448,11 @@
             const fileInput = document.getElementById(`${type}-foto`);
             const file = fileInput.files[0];
             showLoader();
-
             const processUpdate = (fileData = null) => {
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
                 delete data.foto;
                 const payload = { action: 'update', type: type, data: data, fileData: fileData };
-
                 fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
                 .then(res => res.json())
                 .then(result => {
@@ -446,9 +466,7 @@
                         fileInput.required = true;
                         showTab(type === 'upacara' ? 'rekapUpacara' : 'rekapRabu');
                         loadRekap(type);
-                    } else {
-                        throw new Error(result.message || 'Gagal memperbarui laporan.');
-                    }
+                    } else { throw new Error(result.message || 'Gagal memperbarui laporan.'); }
                 })
                 .catch(err => {
                     hideLoader();
@@ -456,7 +474,6 @@
                     console.error(err);
                 });
             };
-
             if (file) {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -464,9 +481,7 @@
                     const fileData = { base64: reader.result.split(',')[1], type: file.type, name: file.name };
                     processUpdate(fileData);
                 };
-            } else {
-                processUpdate(null);
-            }
+            } else { processUpdate(null); }
         }
 
         function confirmDeleteData(type, id, fileId) {
@@ -474,14 +489,12 @@
             modal.classList.remove('hidden');
             const confirmBtn = document.getElementById('confirmDelete');
             const cancelBtn = document.getElementById('cancelDelete');
-
             const confirmHandler = () => {
                 modal.classList.add('hidden');
                 deleteData(type, id, fileId);
                 confirmBtn.removeEventListener('click', confirmHandler);
             };
             const cancelHandler = () => modal.classList.add('hidden');
-            
             confirmBtn.onclick = confirmHandler;
             cancelBtn.onclick = cancelHandler;
         }
@@ -496,9 +509,7 @@
                 if (result.success) {
                     showNotification('Laporan Berhasil Dihapus');
                     loadRekap(type);
-                } else {
-                    throw new Error(result.message || 'Gagal menghapus laporan.');
-                }
+                } else { throw new Error(result.message || 'Gagal menghapus laporan.'); }
             })
             .catch(err => {
                 hideLoader();
@@ -509,8 +520,12 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             showTab('fotoUpacara');
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
         });
-
     </script>
 </body>
 </html>
