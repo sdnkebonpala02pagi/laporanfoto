@@ -209,6 +209,11 @@
                             <tbody></tbody>
                         </table>
                      </div>
+                     <div class="mt-6 flex justify-end">
+                        <button onclick="confirmDeleteAll('upacara')" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Hapus Semua Data
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Rekap Rabu -->
@@ -234,6 +239,11 @@
                             <tbody></tbody>
                         </table>
                      </div>
+                     <div class="mt-6 flex justify-end">
+                        <button onclick="confirmDeleteAll('rabu')" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Hapus Semua Data
+                        </button>
+                    </div>
                 </div>
             </main>
         </div>
@@ -251,6 +261,18 @@
         </div>
     </div>
     
+    <!-- Modal Konfirmasi Hapus SEMUA -->
+    <div id="deleteAllModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center hidden z-50">
+        <div class="glassmorphism p-8 max-w-sm mx-auto">
+            <h3 class="text-lg font-bold mb-4 text-gray-900">Konfirmasi Hapus Semua Data</h3>
+            <p class="text-gray-600 mb-6">PERINGATAN: Aksi ini tidak dapat diurungkan. Anda yakin akan menghapus SEMUA data laporan ini?</p>
+            <div class="flex justify-end gap-4">
+                <button id="cancelDeleteAll" class="py-2 px-4 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800">Tidak</button>
+                <button id="confirmDeleteAll" class="py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white">Ya, Hapus Semua</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loader Modal -->
     <div id="loaderModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center hidden z-50">
         <div class="loader"></div>
@@ -278,7 +300,6 @@
             document.getElementById(tabName).classList.remove('hidden');
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`button[onclick*="${tabName}"]`).classList.add('active');
-            // Close sidebar on mobile after clicking a tab
             document.getElementById('sidebar').classList.remove('open');
         }
 
@@ -518,6 +539,50 @@
             });
         }
         
+        function confirmDeleteAll(type) {
+            const modal = document.getElementById('deleteAllModal');
+            modal.classList.remove('hidden');
+            const confirmBtn = document.getElementById('confirmDeleteAll');
+            const cancelBtn = document.getElementById('cancelDeleteAll');
+
+            const confirmHandler = () => {
+                modal.classList.add('hidden');
+                deleteAllData(type);
+                confirmBtn.removeEventListener('click', confirmHandler);
+            };
+            const cancelHandler = () => {
+                modal.classList.add('hidden');
+                cancelBtn.removeEventListener('click', cancelHandler);
+            };
+
+            confirmBtn.onclick = confirmHandler;
+            cancelBtn.onclick = cancelHandler;
+        }
+
+        function deleteAllData(type) {
+            showLoader();
+            const payload = { action: 'deleteAll', type: type };
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(result => {
+                hideLoader();
+                if (result.success) {
+                    showNotification('Semua laporan berhasil dihapus');
+                    loadRekap(type);
+                } else {
+                    throw new Error(result.message || 'Gagal menghapus semua laporan.');
+                }
+            })
+            .catch(err => {
+                hideLoader();
+                showNotification('Terjadi kesalahan: ' + err.message, 'error');
+                console.error(err);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             showTab('fotoUpacara');
             const menuButton = document.getElementById('menu-button');
